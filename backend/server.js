@@ -14,7 +14,7 @@ const animalRoutes = require('./routes/animalRoutes');
 app.use('/api/animales', animalRoutes);
 
 app.get('/', (req, res) => {
-  res.send('🐯 API Zoológico funcionando');
+  res.send('🐯 API Zoológico funcionando correctamente la Aplicacion');
 });
 
 app.listen(PORT, () => {
