@@ -199,7 +199,8 @@
         <input id="color" placeholder="Color" required />
         <!-- Fin nuevos campos -->
 
-        <button type="submit">💾 Guardar Animal</button>
+        <!--  AGREGA ESTE ID: necesario para cambiar el texto del botón en modo edición -->
+        <button type="submit" id="btn-animal">💾 Guardar Animal</button>
       </form>
     </div>
 
@@ -220,7 +221,7 @@
     const duenioLista = document.getElementById('duenio-lista');
 
     const formAnimal = document.getElementById('form-animal');
-    const btnAnimal = document.getElementById('btn-animal');
+    const btnAnimal = document.getElementById('btn-animal'); //  Este elemento depende del id agregado en el botón HTML.
     const animalDuenioSelect = document.getElementById('animal-duenio');
     const nombreInput = document.getElementById('nombre');
     const especieInput = document.getElementById('especie');
@@ -286,40 +287,44 @@
   try {
     let res;
 
-    if (editando !== null) {
-      //  Si se está editando, obtenemos el id del animal
-      const id = animalesData[editando].id;
 
-      //  Enviamos PUT al servidor con la data modificada
-      res = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(animal)
-      });
 
-      if (!res.ok) throw new Error('Error al actualizar');
+if (editando !== null) {
+          //  EDITANDO: usamos el id del animal seleccionado
+          const id = animalesData[editando].id;
 
-      //  Reiniciamos estado de edición
-      editando = null;
-      btnAnimal.textContent = '💾 Guardar Animal';
+          //  PUT al backend con los cambios
+          res = await fetch(`${API_URL}/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(animal)
+          });
 
-      //  Volvemos a cargar los datos para reflejar cambios reales de la base
-      await cargarAnimales();
-    } else {
-      //  Si es nuevo, hacemos POST
-      res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(animal)
-      });
+          if (!res.ok) throw new Error('Error al actualizar');
 
-      if (!res.ok) throw new Error('Error de servidor');
-      const data = await res.json();
+          //  Volver a modo "guardar" después de editar
+          editando = null;
+          btnAnimal.textContent = '💾 Guardar Animal'; // vuelve a texto original
 
-      //  Agregamos el nuevo animal al arreglo
-      animalesData.push(data);
-      renderAnimales();
-    }
+          //  Re-cargar lista desde la base de datos para reflejar cambios reales
+          await cargarAnimales();
+        } else {
+          // Nuevo registro
+          res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(animal)
+          });
+
+          if (!res.ok) throw new Error('Error de servidor');
+          const data = await res.json();
+
+          // Añadir nuevo animal al arreglo local
+          animalesData.push(data);
+          renderAnimales();
+        }
+
+
 
     //  Reiniciamos formulario
     formAnimal.reset();
