@@ -281,8 +281,23 @@
     color: colorInput.value.trim(),
   };
 
-  if (!animal.duenio || !animal.nombre || !animal.especie || isNaN(animal.edad))
-    return alert('Complete los campos obligatorios');
+// Validación  de campos obligatorios para evitar enviar datos incompletos
+if (
+  !animal.duenio ||
+  !animal.nombre ||
+  !animal.especie ||
+  isNaN(animal.edad) || animal.edad <= 0 ||
+  !animal.alimentacion ||
+  !animal.lugar ||
+  !animal.sexo ||
+  isNaN(animal.peso) || animal.peso <= 0 ||
+  !animal.estado ||
+  !animal.color
+) {
+  return alert('Por favor, complete todos los campos correctamente');
+}
+
+
 
   try {
     let res;
