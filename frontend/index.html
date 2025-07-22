@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Zoológico Web</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #43cea2, #185a9d);
+      margin: 0;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+  .container {
+  background: linear-gradient(to right, #2ecc71, #27ae60); /* Verde selva */
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  width: 95vw;
+  max-width: 1200px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+
+    .formulario,
+    .lista {
+      flex: 1 1 320px;
+      min-width: 300px;
+      max-width: 500px;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: #333;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    input,
+    select,
+    button {
+      padding: 0.5rem 0.8rem; /* Más pequeño */
+      font-size: 0.9rem; /* Tamaño reducido */
+      border-radius: 8px;
+      border: 2px solid #4caf50;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      background-color: #e0f7fa; /* Color llamativo claro */
+      color: #004d40; /* Texto oscuro para buen contraste */
+    }
+
+    input::placeholder,
+    select {
+      color: #00796b; /* Placeholder y texto select */
+    }
+
+    input:focus,
+    select:focus {
+      border-color: #00796b; /* Verde más oscuro al enfocar */
+      box-shadow: 0 0 8px #4db6ac; /* Luz suave */
+      outline: none;
+      background-color: #b2dfdb; /* Fondo más intenso al foco */
+      color: #004d40;
+    }
+
+    button {
+      background: linear-gradient(45deg, #ff6f00, #ff8f00);
+      color: white;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(255, 111, 0, 0.6);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
+      font-size: 1rem; /* Botones un poco más grandes */
+      padding: 0.75rem 1.2rem;
+      border-radius: 10px;
+    }
+
+    button:hover {
+      background: linear-gradient(45deg, #ff8f00, #ff6f00);
+      box-shadow: 0 6px 12px rgba(255, 143, 0, 0.8);
+    }
+
+    /* Un poco de espacio extra entre campos */
+    form > * {
+      margin-bottom: 0.8rem;
+    }
+
+    #duenio-lista {
+      margin-top: 0.5rem;
+    }
+
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    li {
+      background: aqua;
+      border: 1px solid #b2f2bb;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-left: 5px solid #38c172;
+      border-radius: 10px;
+      position: relative;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .btn-group {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+
+    .btn-group button {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.9rem;
+      border-radius: 5px;
+      background: #ffc107;
+      color: black;
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .btn-group button:last-child {
+      background: #dc3545;
+      color: white;
+    }
+
+    .btn-group button:hover {
+      opacity: 0.9;
+    }
+
+    .lista {
+      max-height: 500px;
+      overflow-y: auto;
+      padding-right: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- FORMULARIO DUEÑO -->
+      <div>
+        <h2>👤 Agregar Dueño</h2>
+        <form id="form-duenio">
+          <input id="nombre-duenio" placeholder="Nombre completo" required />
+          <button type="submit">➕ Agregar Dueño</button>
+        </form>
+        <h3>📋 Dueños Registrados</h3>
+        <select id="duenio-lista" size="5" style="width: 100%; margin-top: 0.8rem;"></select>
+      </div>
+
+    <!-- FORMULARIO ANIMAL -->
+    <div class="formulario">
+      <h2>🐶 Agregar Animal</h2>
+      <form id="form-animal">
+        <select id="animal-duenio" required>
+          <option value="">-- Seleccionar dueño --</option>
+        </select>
+        <input id="nombre" placeholder="Nombre del animal" required />
+        <input id="especie" placeholder="Especie" required />
+        <input id="edad" type="number" placeholder="Edad" required />
+        <input id="alimentacion" placeholder="Alimentación" required />
+        <input id="lugar" placeholder="Lugar donde vive" required />
+
+        <!-- Nuevos campos añadidos -->
+        <select id="sexo" required>
+          <option value="">Sexo</option>
+          <option value="Macho">Macho</option>
+          <option value="Hembra">Hembra</option>
+        </select>
+        <input id="peso" type="number" step="0.01" placeholder="Peso (kg)" required />
+        <select id="estado" required>
+          <option value="">Estado actual</option>
+          <option value="Activo">Activo</option>
+          <option value="Fallecido">Fallecido</option>
+          <option value="En adopción">En adopción</option>
+        </select>
+        <input id="color" placeholder="Color" required />
+        <!-- Fin nuevos campos -->
+
+        <button type="submit">💾 Guardar Animal</button>
+      </form>
+    </div>
+
+    <!-- LISTA DE ANIMALES -->
+    <div class="lista">
+      <h1>🐾 Lista de Animales</h1>
+      <ul id="animales"></ul>
+    </div>
+  </div>
+
+
+
+  <script>
+    const API_URL = 'http://localhost:3000/api/animales';
+
+    const formDuenio = document.getElementById('form-duenio');
+    const nombreDuenioInput = document.getElementById('nombre-duenio');
+    const duenioLista = document.getElementById('duenio-lista');
+
+    const formAnimal = document.getElementById('form-animal');
+    const btnAnimal = document.getElementById('btn-animal');
+    const animalDuenioSelect = document.getElementById('animal-duenio');
+    const nombreInput = document.getElementById('nombre');
+    const especieInput = document.getElementById('especie');
+    const edadInput = document.getElementById('edad');
+    const alimentacionInput = document.getElementById('alimentacion');
+    const lugarInput = document.getElementById('lugar');
+    const sexoInput = document.getElementById('sexo');
+    const pesoInput = document.getElementById('peso');
+    const estadoInput = document.getElementById('estado');
+    const colorInput = document.getElementById('color');
+    const animalesLista = document.getElementById('animales');
+
+    let animalesData = [];
+    let duenios = [];
+    let editando = null;
+
+    formDuenio.addEventListener('submit', e => {
+      e.preventDefault();
+      const nombre = nombreDuenioInput.value.trim();
+      if (!nombre) return alert('Nombre requerido');
+      duenios.push({ nombre });
+      renderDuenios();
+      formDuenio.reset();
+      alert('Dueño agregado');
+    });
+
+    function renderDuenios() {
+      duenioLista.innerHTML = '';
+      animalDuenioSelect.innerHTML = '<option value="">-- Seleccionar dueño --</option>';
+      duenios.forEach(d => {
+        const opt1 = document.createElement('option');
+        opt1.textContent = d.nombre;
+        opt1.value = d.nombre;
+        duenioLista.appendChild(opt1);
+
+        const opt2 = document.createElement('option');
+        opt2.textContent = d.nombre;
+        opt2.value = d.nombre;
+        animalDuenioSelect.appendChild(opt2);
+      });
+    }
+
+    formAnimal.addEventListener('submit', async e => {
+      e.preventDefault();
+      const animal = {
+        duenio: animalDuenioSelect.value,
+        nombre: nombreInput.value.trim(),
+        especie: especieInput.value.trim(),
+        edad: parseInt(edadInput.value),
+        alimentacion: alimentacionInput.value.trim(),
+        lugar: lugarInput.value.trim(),
+        sexo: sexoInput.value,
+        peso: parseFloat(pesoInput.value),
+        estado: estadoInput.value,
+        color: colorInput.value.trim(),
+      };
+
+      if (!animal.duenio || !animal.nombre || !animal.especie || isNaN(animal.edad))
+        return alert('Complete los campos obligatorios');
+
+      try {
+        let res;
+        if (editando !== null) {
+          res = await fetch(`${API_URL}/${animalesData[editando].id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(animal)
+          });
+        } else {
+          res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(animal)
+          });
+        }
+
+        if (!res.ok) throw new Error('Error de servidor');
+        const data = await res.json();
+
+        if (editando !== null) {
+          animalesData[editando] = data;
+          editando = null;
+          btnAnimal.textContent = '💾 Guardar Animal';
+        } else {
+          animalesData.push(data);
+        }
+
+        renderAnimales();
+        formAnimal.reset();
+        animalDuenioSelect.value = '';
+        alert('Animal guardado correctamente');
+      } catch (err) {
+        alert(err.message);
+      }
+    });
+
+    function renderAnimales() {
+      animalesLista.innerHTML = '';
+      animalesData.forEach((a, i) => {
+        const li = document.createElement('li');
+        li.innerHTML = `
+        👤 Dueño: <strong>${a.duenio}</strong><br/>
+        🐾 Nombre del Animal: <strong>${a.nombre}</strong><br/>
+        🐕 Especie: (${a.especie})<br/>
+        🎂 Edad: ${a.edad} años<br/>
+        🍽️ Alimentación: ${a.alimentacion}<br/>
+        📍 Lugar: ${a.lugar}<br/>
+         ⚧ Sexo: ${a.sexo}<br/>
+        ⚖️ Peso: ${a.peso} kg<br/>
+        📌 Estado: ${a.estado}<br/>
+        🎨 Color: ${a.color}<br/>
+
+          <div class="btn-group">
+            <button onclick="editarAnimal(${i})">✏️ Editar</button>
+            <button onclick="eliminarAnimal(${i})">🗑️ Eliminar</button>
+          </div>
+        `;
+        animalesLista.appendChild(li);
+      });
+    }
+
+    async function eliminarAnimal(i) {
+      if (!confirm('¿Seguro que deseas eliminar?')) return;
+      const id = animalesData[i].id;
+      try {
+        const res = await fetch(`${API_URL}/${id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error('Error al eliminar');
+        animalesData.splice(i, 1);
+        renderAnimales();
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    function editarAnimal(i) {
+      const a = animalesData[i];
+      animalDuenioSelect.value = a.duenio;
+      nombreInput.value = a.nombre;
+      especieInput.value = a.especie;
+      edadInput.value = a.edad;
+      alimentacionInput.value = a.alimentacion;
+      lugarInput.value = a.lugar;
+      sexoInput.value = a.sexo;
+      pesoInput.value = a.peso;
+      estadoInput.value = a.estado;
+      colorInput.value = a.color;
+      btnAnimal.textContent = '💾 Actualizado Animal';
+      editando = i; // <--- Esto es clave para saber que se está editando
+    }
+    
+
+    async function cargarAnimales() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('No se pudo cargar animales');
+        animalesData = await res.json();
+        renderAnimales();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    cargarAnimales();
+  </script>
+</body>
+</html>
