@@ -155,6 +155,32 @@
       overflow-y: auto;
       padding-right: 0.5rem;
     }
+
+    /* Estilos para la notificación flotante */
+    #notificacion {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      font-weight: bold;
+      display: none;
+      z-index: 1000;
+      color: white;
+      font-size: 1rem;
+      min-width: 220px;
+      text-align: center;
+    }
+
+    #notificacion.success {
+      background-color: #2ecc71;
+    }
+
+    #notificacion.error {
+      background-color: #e74c3c;
+    }
+
   </style>
 </head>
 <body>
@@ -211,7 +237,8 @@
     </div>
   </div>
 
-
+  <!-- Contenedor para mensajes flotantes -->
+  <div id="notificacion"></div>
 
   <script>
     const API_URL = 'http://localhost:3000/api/animales';
@@ -238,14 +265,30 @@
     let duenios = [];
     let editando = null;
 
+    // Función para mostrar notificaciones flotantes
+    function mostrarNotificacion(mensaje, tipo = 'success') {
+      const contenedor = document.getElementById('notificacion');
+      contenedor.textContent = mensaje;
+      contenedor.className = ''; // Limpiar clases
+      contenedor.classList.add(tipo);
+      contenedor.style.display = 'block';
+      // Ocultar después de 3 segundos
+      setTimeout(() => {
+        contenedor.style.display = 'none';
+      }, 3000);
+    }
+
     formDuenio.addEventListener('submit', e => {
       e.preventDefault();
       const nombre = nombreDuenioInput.value.trim();
-      if (!nombre) return alert('Nombre requerido');
+      if (!nombre) {
+        mostrarNotificacion('Nombre requerido', 'error'); // Reemplazado alert por notificación
+        return;
+      }
       duenios.push({ nombre });
       renderDuenios();
       formDuenio.reset();
-      alert('Dueño agregado');
+      mostrarNotificacion('Dueño agregado'); // Reemplazado alert por notificación
     });
 
     function renderDuenios() {
@@ -266,45 +309,42 @@
 
 
     formAnimal.addEventListener('submit', async e => {
-  e.preventDefault();
+      e.preventDefault();
 
-  const animal = {
-    duenio: animalDuenioSelect.value,
-    nombre: nombreInput.value.trim(),
-    especie: especieInput.value.trim(),
-    edad: parseInt(edadInput.value),
-    alimentacion: alimentacionInput.value.trim(),
-    lugar: lugarInput.value.trim(),
-    sexo: sexoInput.value,
-    peso: parseFloat(pesoInput.value),
-    estado: estadoInput.value,
-    color: colorInput.value.trim(),
-  };
+      const animal = {
+        duenio: animalDuenioSelect.value,
+        nombre: nombreInput.value.trim(),
+        especie: especieInput.value.trim(),
+        edad: parseInt(edadInput.value),
+        alimentacion: alimentacionInput.value.trim(),
+        lugar: lugarInput.value.trim(),
+        sexo: sexoInput.value,
+        peso: parseFloat(pesoInput.value),
+        estado: estadoInput.value,
+        color: colorInput.value.trim(),
+      };
 
-// Validación  de campos obligatorios para evitar enviar datos incompletos
-if (
-  !animal.duenio ||
-  !animal.nombre ||
-  !animal.especie ||
-  isNaN(animal.edad) || animal.edad <= 0 ||
-  !animal.alimentacion ||
-  !animal.lugar ||
-  !animal.sexo ||
-  isNaN(animal.peso) || animal.peso <= 0 ||
-  !animal.estado ||
-  !animal.color
-) {
-  return alert('Por favor, complete todos los campos correctamente');
-}
+      // Validación  de campos obligatorios para evitar enviar datos incompletos
+      if (
+        !animal.duenio ||
+        !animal.nombre ||
+        !animal.especie ||
+        isNaN(animal.edad) || animal.edad <= 0 ||
+        !animal.alimentacion ||
+        !animal.lugar ||
+        !animal.sexo ||
+        isNaN(animal.peso) || animal.peso <= 0 ||
+        !animal.estado ||
+        !animal.color
+      ) {
+        mostrarNotificacion('Por favor, complete todos los campos correctamente', 'error'); // Reemplazado alert por notificación
+        return;
+      }
 
+      try {
+        let res;
 
-
-  try {
-    let res;
-
-
-
-if (editando !== null) {
+        if (editando !== null) {
           //  EDITANDO: usamos el id del animal seleccionado
           const id = animalesData[editando].id;
 
@@ -339,19 +379,15 @@ if (editando !== null) {
           renderAnimales();
         }
 
+        //  Reiniciamos formulario
+        formAnimal.reset();
+        animalDuenioSelect.value = '';
+        mostrarNotificacion('Animal guardado correctamente'); // Reemplazado alert por notificación
 
-
-    //  Reiniciamos formulario
-    formAnimal.reset();
-    animalDuenioSelect.value = '';
-    alert('Animal guardado correctamente');
-
-  } catch (err) {
-    alert(err.message);
-  }
-});
-
-
+      } catch (err) {
+        mostrarNotificacion(err.message, 'error'); // Reemplazado alert por notificación
+      }
+    });
 
 
     function renderAnimales() {
@@ -387,8 +423,9 @@ if (editando !== null) {
         if (!res.ok) throw new Error('Error al eliminar');
         animalesData.splice(i, 1);
         renderAnimales();
+        mostrarNotificacion('Animal eliminado correctamente');
       } catch (err) {
-        alert(err.message);
+        mostrarNotificacion(err.message, 'error');
       }
     }
 
@@ -407,7 +444,7 @@ if (editando !== null) {
       btnAnimal.textContent = '💾 Actualizado Animal';
       editando = i; // <--- Esto es clave para saber que se está editando
     }
-    
+
 
     async function cargarAnimales() {
       try {
@@ -417,6 +454,7 @@ if (editando !== null) {
         renderAnimales();
       } catch (err) {
         console.error(err);
+        mostrarNotificacion('Error al cargar animales', 'error');
       }
     }
 
