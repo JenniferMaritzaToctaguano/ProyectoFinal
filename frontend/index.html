@@ -8,7 +8,7 @@
       box-sizing: border-box;
     }
 
-    body {
+     body {
       font-family: 'Segoe UI', sans-serif;
       background: linear-gradient(135deg, #43cea2, #185a9d);
       margin: 0;
@@ -19,18 +19,17 @@
       min-height: 100vh;
     }
 
-  .container {
-  background: linear-gradient(to right, #2ecc71, #27ae60); /* Verde selva */
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  width: 95vw;
-  max-width: 1200px;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-}
-
+    .container {
+      background: linear-gradient(to right, #2ecc71, #27ae60); /* Verde selva */
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+      width: 95vw;
+      max-width: 1200px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 2rem;
+    }
 
     .formulario,
     .lista {
@@ -264,59 +263,76 @@
       });
     }
 
+
     formAnimal.addEventListener('submit', async e => {
-      e.preventDefault();
-      const animal = {
-        duenio: animalDuenioSelect.value,
-        nombre: nombreInput.value.trim(),
-        especie: especieInput.value.trim(),
-        edad: parseInt(edadInput.value),
-        alimentacion: alimentacionInput.value.trim(),
-        lugar: lugarInput.value.trim(),
-        sexo: sexoInput.value,
-        peso: parseFloat(pesoInput.value),
-        estado: estadoInput.value,
-        color: colorInput.value.trim(),
-      };
+  e.preventDefault();
 
-      if (!animal.duenio || !animal.nombre || !animal.especie || isNaN(animal.edad))
-        return alert('Complete los campos obligatorios');
+  const animal = {
+    duenio: animalDuenioSelect.value,
+    nombre: nombreInput.value.trim(),
+    especie: especieInput.value.trim(),
+    edad: parseInt(edadInput.value),
+    alimentacion: alimentacionInput.value.trim(),
+    lugar: lugarInput.value.trim(),
+    sexo: sexoInput.value,
+    peso: parseFloat(pesoInput.value),
+    estado: estadoInput.value,
+    color: colorInput.value.trim(),
+  };
 
-      try {
-        let res;
-        if (editando !== null) {
-          res = await fetch(`${API_URL}/${animalesData[editando].id}`, {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(animal)
-          });
-        } else {
-          res = await fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(animal)
-          });
-        }
+  if (!animal.duenio || !animal.nombre || !animal.especie || isNaN(animal.edad))
+    return alert('Complete los campos obligatorios');
 
-        if (!res.ok) throw new Error('Error de servidor');
-        const data = await res.json();
+  try {
+    let res;
 
-        if (editando !== null) {
-          animalesData[editando] = data;
-          editando = null;
-          btnAnimal.textContent = '💾 Guardar Animal';
-        } else {
-          animalesData.push(data);
-        }
+    if (editando !== null) {
+      //  Si se está editando, obtenemos el id del animal
+      const id = animalesData[editando].id;
 
-        renderAnimales();
-        formAnimal.reset();
-        animalDuenioSelect.value = '';
-        alert('Animal guardado correctamente');
-      } catch (err) {
-        alert(err.message);
-      }
-    });
+      //  Enviamos PUT al servidor con la data modificada
+      res = await fetch(`${API_URL}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(animal)
+      });
+
+      if (!res.ok) throw new Error('Error al actualizar');
+
+      //  Reiniciamos estado de edición
+      editando = null;
+      btnAnimal.textContent = '💾 Guardar Animal';
+
+      //  Volvemos a cargar los datos para reflejar cambios reales de la base
+      await cargarAnimales();
+    } else {
+      //  Si es nuevo, hacemos POST
+      res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(animal)
+      });
+
+      if (!res.ok) throw new Error('Error de servidor');
+      const data = await res.json();
+
+      //  Agregamos el nuevo animal al arreglo
+      animalesData.push(data);
+      renderAnimales();
+    }
+
+    //  Reiniciamos formulario
+    formAnimal.reset();
+    animalDuenioSelect.value = '';
+    alert('Animal guardado correctamente');
+
+  } catch (err) {
+    alert(err.message);
+  }
+});
+
+
+
 
     function renderAnimales() {
       animalesLista.innerHTML = '';
