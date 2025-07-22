@@ -24,7 +24,7 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   const { duenio, nombre, especie, edad, alimentacion, lugar, sexo, peso, estado, color } = req.body;
   db.query(
-    'INSERT INTO animales (duenio, nombre, especie, edad, alimentacion, lugar, sexo , peso, estado, color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    'INSERT INTO animales (duenio, nombre, especie, edad, alimentacion, lugar, sexo, peso, estado , color) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
     [duenio, nombre, especie, edad, alimentacion, lugar, sexo, peso, estado, color],
     (err, result) => {
       if (err) return res.status(500).json({ error: err.message });
